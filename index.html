@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mining Speed Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #242424;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        input[type="number"] {
+            margin: 5px 0;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #333;
+            border: 1px solid #555;
+            color: white;
+        }
+        button {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .results {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+        }
+        .warning {
+            color: #ff6666;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Mining Speed Calculator</h2>
+
+    <label for="miningSpeed">Mining Speed:</label>
+    <input type="number" id="miningSpeed" name="miningSpeed"><br>
+
+    <label for="coldResistance">Cold Resistance:</label>
+    <input type="number" id="coldResistance" name="coldResistance"><br>
+
+    <button onclick="calculateMiningSpeed()">Calculate</button>
+
+    <div id="results" class="results">
+        <!-- Results will be displayed here -->
+    </div>
+
+    <script>
+        function calculateMiningSpeed() {
+            const miningSpeed = parseFloat(document.getElementById('miningSpeed').value);
+            const coldResistance = parseFloat(document.getElementById('coldResistance').value);
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            const tickThresholds = [
+                { tick: 25, speed: 6589 },
+                { tick: 24, speed: 6858 },
+                { tick: 23, speed: 7149 },
+                { tick: 22, speed: 7467 },
+                { tick: 21, speed: 7814 },
+                { tick: 20, speed: 8196 },
+                { tick: 19, speed: 8616 },
+                { tick: 18, speed: 9082 },
+                { tick: 17, speed: 9601 },
+                { tick: 9, speed: 17685 },
+                { tick: 8, speed: 19765 },
+                { tick: 7, speed: 22401 },
+                { tick: 6, speed: 25847 },
+                { tick: 5, speed: 30546 },
+                { tick: 4, speed: 37334 }
+            ];
+
+            let currentTick = 'N/A';
+            let maxCold = 0;
+
+            for (let i = 0; i < tickThresholds.length; i++) {
+                if (miningSpeed >= tickThresholds[i].speed) {
+                    currentTick = tickThresholds[i].tick;
+                    maxCold = coldResistance + ((miningSpeed / tickThresholds[i + 1]?.speed - 1) * 200);
+                    break;
+                }
+            }
+
+            if (currentTick !== 'N/A') {
+                resultsDiv.innerHTML = `
+                    <p>You are currently at <strong>${currentTick} tick speed</strong>.</p>
+                    <p>You can accumulate up to <strong>${Math.round(maxCold)}</strong> Cold before dropping to ${Math.round(currentTick) + 1} tick speed.</p>
+                `;
+            } else {
+                resultsDiv.innerHTML = `
+                    <p class="warning">Your mining speed is too low to reach any significant tick speed!</p>
+                `;
+            }
+        }
+    </script>
+
+</body>
+</html>
